@@ -1,98 +1,109 @@
-# Creating an Nginx Pod with kubectl (Imperative Way)
+# Day 7: Kubernetes Pod Management
 
-## 1. Create a Cluster
+This guide covers basic pod operations in Kubernetes using both imperative commands and declarative YAML files.
 
-```sh
+## Prerequisites
+
+- Kind cluster installed
+- kubectl configured
+
+## 1. Cluster Setup
+
+### Create a Kind Cluster
+```bash
 kind create cluster --name kind
 ```
-<!-- create cluster -->
 
-## 2. Create an Nginx Pod
+## 2. Pod Creation
 
-```sh
+### Imperative Way (Command Line)
+```bash
+# Create an Nginx pod directly
 kubectl run nginx-pod --image=nginx:latest
 ```
-<!-- create pod -->
 
-## 3. List Pods
-
-```sh
-kubectl get pods
-```
-<!-- list pods -->
-
-## 4. Get Pod Details
-
-```sh
-kubectl explain pod
-```
-<!-- pod details -->
-
-## 5. Delete the Pod
-
-```sh
-kubectl delete pod nginx-pod
-```
-<!-- remove pod -->
-
-## 6. Create Pod from YAML
-
-```sh
+### Declarative Way (YAML File)
+```bash
+# Create pod from YAML file
 kubectl create -f pod.yml
-```
-<!-- from yaml -->
 
-## 7. Apply Changes from YAML
-
-```sh
+# Apply changes from YAML file (recommended)
 kubectl apply -f pod.yml
 ```
 
-## 8. Describe Pod
+## 3. Pod Information and Monitoring
 
-```sh
-kubectl describe pod nginx-pod
+### List Pods
+```bash
+# Basic pod listing
+kubectl get pods
+
+# Show pod labels
+kubectl get pods --show-labels
+
+# Wide output (more details)
+kubectl get pods -o wide
 ```
-<!-- describe pod -->
 
-## 9. Edit Pod
+### Pod Details
+```bash
+# Get detailed pod information
+kubectl describe pod nginx-pod
 
-```sh
+# Get pod specification help
+kubectl explain pod
+```
+
+## 4. Pod Interaction
+
+### Edit Running Pod
+```bash
 kubectl edit pod nginx-pod
 ```
-<!-- edit pod -->
 
-## 10. Execute Command in Pod
-
-```sh
+### Execute Commands in Pod
+```bash
+# Interactive bash session
 kubectl exec -it nginx-pod -- /bin/bash
 ```
 
-## 11. Dry Run
+## 5. Dry Run and Testing
 
-```sh
+### YAML Output
+```bash
+# Generate YAML without creating the pod
 kubectl run nginx-pod --image=nginx:latest --dry-run=client -o yaml
 ```
-<!-- dry run -->
-```
 
-## 12. Dry Run in JSON
-
-```sh
+### JSON Output
+```bash
+# Generate JSON without creating the pod
 kubectl run nginx-pod --image=nginx:latest --dry-run=client -o json
 ```
-<!-- dry run json -->
 
-## 13. Get Pods Labels
+## 6. Cleanup
 
-```sh
-kubectl get pods --show-labels
+### Delete Pod
+```bash
+kubectl delete pod nginx-pod
 ```
-<!-- get labels -->
 
-## 14. Get Pods with Wide Output
+## Common Commands Summary
 
-```sh
-kubectl get pods -o wide
-```
-<!-- get wide output -->
+| Command | Description |
+|---------|-------------|
+| `kubectl run` | Create pod imperatively |
+| `kubectl create -f` | Create resources from file |
+| `kubectl apply -f` | Apply configuration from file |
+| `kubectl get pods` | List pods |
+| `kubectl describe pod` | Get detailed pod info |
+| `kubectl edit pod` | Edit running pod |
+| `kubectl exec -it` | Execute commands in pod |
+| `kubectl delete pod` | Remove pod |
+
+## Best Practices
+
+- Use `kubectl apply` instead of `kubectl create` for better version control
+- Always use `--dry-run=client -o yaml` to preview changes
+- Use descriptive names for your pods
+- Clean up resources when no longer needed
