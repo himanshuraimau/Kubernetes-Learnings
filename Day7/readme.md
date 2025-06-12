@@ -1,109 +1,108 @@
-# Day 7: Kubernetes Pod Management
+# Day 7: Kubernetes Pods
 
-This guide covers basic pod operations in Kubernetes using both imperative commands and declarative YAML files.
+## 🚀 What are Pods?
 
-## Prerequisites
+**Pods** are the smallest deployable units in Kubernetes. They wrap one or more containers with shared storage and network.
 
-- Kind cluster installed
-- kubectl configured
+## 🎯 Key Concepts
 
-## 1. Cluster Setup
+- **Single Pod = One or more containers**
+- **Shared network** (same IP, different ports)  
+- **Shared storage** volumes
+- **Lifecycle** tied together
 
-### Create a Kind Cluster
+## 📝 Hands-on Practice
+
+### 1. Imperative Approach
+
 ```bash
-kind create cluster --name kind
-```
-
-## 2. Pod Creation
-
-### Imperative Way (Command Line)
-```bash
-# Create an Nginx pod directly
+# Create pod directly
 kubectl run nginx-pod --image=nginx:latest
-```
 
-### Declarative Way (YAML File)
-```bash
-# Create pod from YAML file
-kubectl create -f pod.yml
-
-# Apply changes from YAML file (recommended)
-kubectl apply -f pod.yml
-```
-
-## 3. Pod Information and Monitoring
-
-### List Pods
-```bash
-# Basic pod listing
+# Get pod info
 kubectl get pods
-
-# Show pod labels
-kubectl get pods --show-labels
-
-# Wide output (more details)
-kubectl get pods -o wide
+kubectl describe pod nginx-pod
 ```
 
-### Pod Details
+### 2. Declarative Approach (Recommended)
+
+Using `pod.yml`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    env: demo
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+```
+
+```bash
+# Apply YAML configuration
+kubectl apply -f pod.yml
+
+# Verify pod is running
+kubectl get pods -l env=demo
+```
+
+### 3. Pod Management
+
 ```bash
 # Get detailed pod information
 kubectl describe pod nginx-pod
 
-# Get pod specification help
-kubectl explain pod
-```
+# View pod logs
+kubectl logs nginx-pod
 
-## 4. Pod Interaction
-
-### Edit Running Pod
-```bash
-kubectl edit pod nginx-pod
-```
-
-### Execute Commands in Pod
-```bash
-# Interactive bash session
+# Execute commands inside pod
 kubectl exec -it nginx-pod -- /bin/bash
+
+# Port forwarding to access pod locally
+kubectl port-forward nginx-pod 8080:80
 ```
 
-## 5. Dry Run and Testing
+### 4. Pod Outputs & Status
 
-### YAML Output
 ```bash
-# Generate YAML without creating the pod
-kubectl run nginx-pod --image=nginx:latest --dry-run=client -o yaml
+# Check pod status
+kubectl get pods -o wide
+
+# Generate YAML without creating
+kubectl run test-pod --image=nginx --dry-run=client -o yaml
 ```
 
-### JSON Output
-```bash
-# Generate JSON without creating the pod
-kubectl run nginx-pod --image=nginx:latest --dry-run=client -o json
-```
+## 🧹 Cleanup
 
-## 6. Cleanup
-
-### Delete Pod
 ```bash
+# Delete pod
 kubectl delete pod nginx-pod
+
+# Delete using YAML file
+kubectl delete -f pod.yml
 ```
 
-## Common Commands Summary
+## 💡 Key Commands
 
-| Command | Description |
-|---------|-------------|
+| Command | Purpose |
+|---------|---------|
 | `kubectl run` | Create pod imperatively |
-| `kubectl create -f` | Create resources from file |
-| `kubectl apply -f` | Apply configuration from file |
+| `kubectl apply -f` | Apply YAML configuration |
 | `kubectl get pods` | List pods |
 | `kubectl describe pod` | Get detailed pod info |
-| `kubectl edit pod` | Edit running pod |
-| `kubectl exec -it` | Execute commands in pod |
-| `kubectl delete pod` | Remove pod |
+| `kubectl logs` | View pod logs |
+| `kubectl exec` | Execute commands in pod |
 
-## Best Practices
+## 🎯 Best Practices
 
-- Use `kubectl apply` instead of `kubectl create` for better version control
-- Always use `--dry-run=client -o yaml` to preview changes
-- Use descriptive names for your pods
-- Clean up resources when no longer needed
+- Use **declarative YAML** for production
+- Always set **resource limits**
+- Use meaningful **labels** for organization
+- Monitor pod **health** and **logs**
+
+---
